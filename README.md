@@ -40,3 +40,39 @@ The terminal output showed the task operations and asynchronous task lookup runn
 
 
 The Day 1 program was tested successfully with Node.js. The program demonstrated task creation, task lookup, filtering, updating, deletion, task summaries, asynchronous task lookup, and error handling.
+
+
+## Day 2 - TypeScript Backend Foundations
+
+### TypeScript Setup
+
+TypeScript was added to the project using:
+
+npm install -D typescript tsx @types/node
+
+### What I Learnt
+Basic TypeScript types such as string, number, and boolean
+Typed arrays and objects
+Type aliases
+Interfaces
+Union types
+Optional properties
+Typed function parameters and return values
+The Partial<T> utility type
+Generics using ApiResponse<T>
+Why avoiding any improves type safety
+Compiling TypeScript into JavaScript
+Running compiled JavaScript with Node.js
+
+### TypeScript vs JavaScript
+
+JavaScript checks many errors while the program is running.
+
+TypeScript adds static type checking before the program runs. This helps catch mistakes during development.
+
+
+### Type-Safety Challenge
+
+I tested the TypeScript compiler by removing the required `createdAt` property from a task. TypeScript reported an error because the property was required by the `Task` type.
+
+After adding `createdAt`, the project compiled successfully.
