@@ -76,3 +76,27 @@ TypeScript adds static type checking before the program runs. This helps catch m
 I tested the TypeScript compiler by removing the required `createdAt` property from a task. TypeScript reported an error because the property was required by the `Task` type.
 
 After adding `createdAt`, the project compiled successfully.
+
+
+
+## Day 3 - Node.js, HTTP & Express REST API
+
+### Overview
+
+Day 3 converted the typed in-memory task management project into a REST API using Node.js, Express and TypeScript.
+
+The API follows this request flow:
+
+Client → Express Route → Controller → Service → Response
+
+### Technologies
+
+- Node.js
+- TypeScript
+- Express
+- In-memory task data
+
+### Installation
+
+Install dependencies:
+npm install
