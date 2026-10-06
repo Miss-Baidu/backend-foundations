@@ -1,18 +1,14 @@
 import tasks from "./data";
+import { ApiResponse, Task, TaskStatus } from "../types/task";
 
-interface Task {
-  id: number;
-  title: string;
-  status: "pending" | "in-progress" | "completed";
-  priority: "low" | "medium" | "high";
-  assignee: string;
-}
-
-type TaskStatus = "pending" | "in-progress" | "completed";
-
-function addTask(task: Task): Task {
+function addTask(task: Task): ApiResponse<Task> {
   tasks.push(task);
-  return task;
+
+  return {
+    success: true,
+    data: task,
+    message: "Task added successfully"
+  };
 }
 
 function findTaskById(id: number): Task | undefined {
@@ -23,7 +19,10 @@ function filterByStatus(status: TaskStatus): Task[] {
   return tasks.filter(task => task.status === status);
 }
 
-function updateTask(id: number, updates: Partial<Task>): Task | null {
+function updateTask(
+  id: number,
+  updates: Partial<Task>
+): ApiResponse<Task> | null {
   const task = tasks.find(task => task.id === id);
 
   if (!task) {
@@ -32,7 +31,11 @@ function updateTask(id: number, updates: Partial<Task>): Task | null {
 
   Object.assign(task, updates);
 
-  return task;
+  return {
+    success: true,
+    data: task,
+    message: "Task updated successfully"
+  };
 }
 
 function deleteTask(id: number): Task | null {
@@ -42,7 +45,7 @@ function deleteTask(id: number): Task | null {
     return null;
   }
 
-  return tasks.splice(index, 1)[0];
+  return tasks.splice(index, 1)[0] ?? null;
 }
 
 function getTaskSummary(): {

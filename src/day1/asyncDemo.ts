@@ -1,12 +1,5 @@
 import { findTaskById } from "./taskService";
-
-interface Task {
-  id: number;
-  title: string;
-  status: "pending" | "in-progress" | "completed";
-  priority: "low" | "medium" | "high";
-  assignee: string;
-}
+import { Task } from "../types/task";
 
 function fetchTask(id: number): Promise<Task> {
   return new Promise((resolve, reject) => {

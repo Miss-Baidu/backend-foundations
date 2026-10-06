@@ -8,16 +8,19 @@ import {
 } from "./taskService";
 
 import { getTaskAsync } from "./asyncDemo";
+import { Task } from "../types/task";
 
 console.log("===== ALL TASK OPERATIONS =====");
 
 // 1. Add a task
-const newTask = {
+const newTask: Task = {
   id: 9,
   title: "Learn Node.js",
-  status: "pending" as const,
-  priority: "high" as const,
-  assignee: "Sarah"
+  description: "Continue learning Node.js backend development",
+  status: "pending",
+  priority: "high",
+  assignee: "Sarah",
+  createdAt: new Date()
 };
 
 console.log("\n1. Adding a task:");
