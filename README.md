@@ -249,3 +249,62 @@ Tested operations include:
 - Updating projects and tasks
 - Deleting projects and tasks
 - Confirming deleted records return `404`
+
+## Day 6 - Authentication
+
+### Authentication Flow
+
+The API now supports user registration, login, and JWT-based authentication.
+
+The authentication flow is:
+
+Register → Hash Password → PostgreSQL
+
+Login → Verify Password → Generate JWT
+
+Protected Request → Verify JWT → Access User Data
+
+### Authentication Endpoints
+
+- POST `/auth/register` - Register a new user
+- POST `/auth/login` - Login and receive a JWT
+- GET `/users/me` - Get the currently authenticated user
+
+### Password Security
+
+Passwords are hashed using `bcrypt` before they are stored in PostgreSQL.
+
+Plain-text passwords are never returned by the API.
+
+### JWT Authentication
+
+The application uses JSON Web Tokens (JWT) for authentication.
+
+The JWT secret is stored in the `.env` file using:
+
+JWT_SECRET=your_jwt_secret_here
+
+The `.env` file is ignored by Git and must not contain committed secrets.
+
+### Protected Routes
+
+Protected routes require a Bearer token in the `Authorization` header.
+
+Example:
+
+Authorization: Bearer <token>
+
+The `/users/me` endpoint verifies the token before returning the authenticated user's information.
+
+### Testing
+
+Authentication was tested using `curl`.
+
+Tested operations include:
+
+- User registration
+- Password hashing
+- Login and JWT generation
+- Accessing `/users/me` without a token
+- Accessing `/users/me` with a valid token
+- Accessing `/users/me` with an invalid token
