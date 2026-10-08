@@ -4,7 +4,7 @@ import projectRoutes from "./routes/projectRoutes";
 import { requestLogger } from "./middleware/requestLogger";
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
-
+import adminRoutes from "./routes/adminRoutes";
 const app = express();
 
 app.use(requestLogger);
@@ -21,4 +21,5 @@ app.use("/tasks", taskRoutes);
 app.use("/projects", projectRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
+app.use("/admin", adminRoutes);
 export default app;

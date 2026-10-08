@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import {
   getTasks,
   getTask,
@@ -7,12 +8,32 @@ import {
   removeTask
 } from "../controllers/taskController";
 
+import { authenticateToken } from "../middleware/authMiddleware";
+import { requireTaskProjectOwner } from "../middleware/authorizationMiddleware";
+
 const router = Router();
 
 router.get("/", getTasks);
 router.get("/:id", getTask);
-router.post("/", postTask);
-router.patch("/:id", patchTask);
-router.delete("/:id", removeTask);
+
+router.post(
+  "/",
+  authenticateToken,
+  postTask
+);
+
+router.patch(
+  "/:id",
+  authenticateToken,
+  requireTaskProjectOwner,
+  patchTask
+);
+
+router.delete(
+  "/:id",
+  authenticateToken,
+  requireTaskProjectOwner,
+  removeTask
+);
 
 export default router;

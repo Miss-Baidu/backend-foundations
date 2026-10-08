@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 
+import { AuthenticatedRequest } from "../middleware/authMiddleware";
+
 import {
   getAllProjects,
   getProjectById,
@@ -51,15 +53,23 @@ export async function getProject(
 }
 
 export async function postProject(
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response
 ): Promise<void> {
-  const { name, description, ownerId } = req.body;
+  const { name, description } = req.body;
 
-  if (!name || !ownerId) {
+  if (!req.user) {
+    res.status(401).json({
+      success: false,
+      message: "Authentication required"
+    });
+    return;
+  }
+
+  if (!name) {
     res.status(400).json({
       success: false,
-      message: "name and ownerId are required"
+      message: "name is required"
     });
     return;
   }
@@ -67,7 +77,7 @@ export async function postProject(
   const project = await createProject(
     name,
     description ?? null,
-    Number(ownerId)
+    req.user.userId
   );
 
   res.status(201).json({
@@ -104,14 +114,13 @@ export async function patchProject(
   const {
     name,
     description,
-    ownerId
   } = req.body;
 
   const updatedProject = await updateProject(
     id,
     name ?? project.name,
     description ?? project.description,
-    ownerId ?? project.owner_id
+    project.owner_id
   );
 
   res.status(200).json({
