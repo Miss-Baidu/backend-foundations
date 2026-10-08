@@ -5,76 +5,58 @@ import {
   registerUser
 } from "../services/authService";
 
+import { AppError } from "../middleware/errorHandler";
+
 export async function register(
   req: Request,
   res: Response
-) {
+): Promise<void> {
   const { name, email, password } = req.body;
-
-  if (!name || !email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "Name, email and password are required"
-    });
-  }
 
   try {
     const user = await registerUser(name, email, password);
 
     const { password_hash, ...safeUser } = user;
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       data: safeUser
     });
   } catch (error) {
-    if (error instanceof Error && error.message === "Email already registered") {
-      return res.status(409).json({
-        success: false,
-        message: error.message
-      });
+    if (
+      error instanceof Error &&
+      error.message === "Email already registered"
+    ) {
+      throw new AppError(409, error.message);
     }
 
-    return res.status(500).json({
-      success: false,
-      message: "Registration failed"
-    });
+    throw error;
   }
 }
 
 export async function login(
   req: Request,
   res: Response
-) {
+): Promise<void> {
   const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "Email and password are required"
-    });
-  }
 
   try {
     const token = await loginUser(email, password);
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: {
         token
       }
     });
   } catch (error) {
-    if (error instanceof Error && error.message === "Invalid email or password") {
-      return res.status(401).json({
-        success: false,
-        message: error.message
-      });
+    if (
+      error instanceof Error &&
+      error.message === "Invalid email or password"
+    ) {
+      throw new AppError(401, error.message);
     }
 
-    return res.status(500).json({
-      success: false,
-      message: "Login failed"
-    });
+    throw error;
   }
 }

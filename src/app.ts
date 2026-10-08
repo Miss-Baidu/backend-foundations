@@ -5,6 +5,7 @@ import { requestLogger } from "./middleware/requestLogger";
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
 import adminRoutes from "./routes/adminRoutes";
+import { errorHandler } from "./middleware/errorHandler";
 const app = express();
 
 app.use(requestLogger);
@@ -22,4 +23,7 @@ app.use("/projects", projectRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/admin", adminRoutes);
+
+app.use(errorHandler);
+
 export default app;
