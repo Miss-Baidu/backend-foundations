@@ -41,3 +41,30 @@ export async function createProject(
 
   return result.rows[0];
 }
+export async function updateProject(
+  id: number,
+  name: string,
+  description: string | null,
+  ownerId: number
+): Promise<Project | null> {
+  const result = await pool.query(
+    `UPDATE projects
+     SET name = $1,
+         description = $2,
+         owner_id = $3
+     WHERE id = $4
+     RETURNING *`,
+    [name, description, ownerId, id]
+  );
+
+  return result.rows[0] ?? null;
+}
+
+export async function deleteProject(id: number): Promise<boolean> {
+  const result = await pool.query(
+    "DELETE FROM projects WHERE id = $1",
+    [id]
+  );
+
+  return result.rowCount !== null && result.rowCount > 0;
+}
