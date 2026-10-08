@@ -183,3 +183,69 @@ Client → Express Route → Controller → Service → Response
 
 Install dependencies:
 npm install
+## Day 5 - PostgreSQL Integration
+
+### Architecture
+
+The API follows this request flow:
+
+Route → Controller → Service → Repository → PostgreSQL
+
+- Routes define the API endpoints.
+- Controllers handle HTTP requests and responses.
+- Services contain the application logic.
+- Repositories communicate with PostgreSQL.
+- PostgreSQL provides persistent data storage.
+
+### Environment Configuration
+
+Create a `.env` file in the project root:
+
+PORT=3000
+DATABASE_URL=postgresql://username:password@localhost:5432/backend_internship
+
+The `.env` file is ignored by Git and must not contain committed secrets.
+
+A `.env.example` file is included as a template.
+
+### PostgreSQL Connection
+
+The application uses the `pg` package and a PostgreSQL connection pool.
+
+Database configuration is located in:
+
+src/config/database.ts
+
+### Project API
+
+- GET `/projects` - Get all projects
+- GET `/projects/:id` - Get one project
+- POST `/projects` - Create a project
+- PATCH `/projects/:id` - Update a project
+- DELETE `/projects/:id` - Delete a project
+
+### Task API
+
+- GET `/tasks` - Get all tasks
+- GET `/tasks/:id` - Get one task
+- POST `/tasks` - Create a task
+- PATCH `/tasks/:id` - Update a task
+- DELETE `/tasks/:id` - Delete a task
+
+### Database Persistence
+
+Projects and tasks are stored in PostgreSQL instead of in-memory arrays.
+
+All database queries use parameterized SQL values such as `$1`, `$2`, and `$3` to avoid directly inserting user input into SQL statements.
+
+### Testing
+
+The PostgreSQL integration was tested using `curl`.
+
+Tested operations include:
+
+- Creating projects and tasks
+- Reading projects and tasks
+- Updating projects and tasks
+- Deleting projects and tasks
+- Confirming deleted records return `404`
