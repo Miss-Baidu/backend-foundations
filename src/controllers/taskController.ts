@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import {
   getAllTasks,
   getTaskById,
@@ -6,7 +7,6 @@ import {
   updateTask,
   deleteTask
 } from "../services/taskService";
-import { Task } from "../models/task";
 
 export function healthCheck(_req: Request, res: Response): void {
   res.status(200).json({
@@ -15,14 +15,22 @@ export function healthCheck(_req: Request, res: Response): void {
   });
 }
 
-export function getTasks(_req: Request, res: Response): void {
+export async function getTasks(
+  _req: Request,
+  res: Response
+): Promise<void> {
+  const tasks = await getAllTasks();
+
   res.status(200).json({
     success: true,
-    data: getAllTasks()
+    data: tasks
   });
 }
 
-export function getTask(req: Request, res: Response): void {
+export async function getTask(
+  req: Request,
+  res: Response
+): Promise<void> {
   const id = Number(req.params.id);
 
   if (Number.isNaN(id)) {
@@ -33,7 +41,7 @@ export function getTask(req: Request, res: Response): void {
     return;
   }
 
-  const task = getTaskById(id);
+  const task = await getTaskById(id);
 
   if (!task) {
     res.status(404).json({
@@ -49,33 +57,45 @@ export function getTask(req: Request, res: Response): void {
   });
 }
 
-export function postTask(req: Request, res: Response): void {
-  const { title, status, priority, assignee } = req.body;
+export async function postTask(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const {
+    title,
+    description,
+    status = "todo",
+    projectId,
+    assignedTo
+  } = req.body;
 
-  if (!title || !status || !priority || !assignee) {
+  if (!title || !projectId) {
     res.status(400).json({
       success: false,
-      message: "title, status, priority and assignee are required"
+      message: "title and projectId are required"
     });
     return;
   }
 
-  const newTask: Task = {
-    id: Date.now(),
+  const task = await createTask(
     title,
+    description ?? null,
     status,
-    priority,
-    assignee,
-    description: req.body.description,
-    createdAt: new Date()
-  };
+    Number(projectId),
+    assignedTo ? Number(assignedTo) : null
+  );
 
-  const result = createTask(newTask);
-
-  res.status(201).json(result);
+  res.status(201).json({
+    success: true,
+    data: task,
+    message: "Task created successfully"
+  });
 }
 
-export function patchTask(req: Request, res: Response): void {
+export async function patchTask(
+  req: Request,
+  res: Response
+): Promise<void> {
   const id = Number(req.params.id);
 
   if (Number.isNaN(id)) {
@@ -86,9 +106,17 @@ export function patchTask(req: Request, res: Response): void {
     return;
   }
 
-  const result = updateTask(id, req.body);
+  const {
+    title,
+    description,
+    status,
+    projectId,
+    assignedTo
+  } = req.body;
 
-  if (!result) {
+  const task = await getTaskById(id);
+
+  if (!task) {
     res.status(404).json({
       success: false,
       message: "Task not found"
@@ -96,10 +124,26 @@ export function patchTask(req: Request, res: Response): void {
     return;
   }
 
-  res.status(200).json(result);
+  const updatedTask = await updateTask(
+    id,
+    title ?? task.title,
+    description ?? task.description,
+    status ?? task.status,
+    projectId ?? task.project_id,
+    assignedTo ?? task.assigned_to
+  );
+
+  res.status(200).json({
+    success: true,
+    data: updatedTask,
+    message: "Task updated successfully"
+  });
 }
 
-export function removeTask(req: Request, res: Response): void {
+export async function removeTask(
+  req: Request,
+  res: Response
+): Promise<void> {
   const id = Number(req.params.id);
 
   if (Number.isNaN(id)) {
@@ -110,7 +154,7 @@ export function removeTask(req: Request, res: Response): void {
     return;
   }
 
-  const deleted = deleteTask(id);
+  const deleted = await deleteTask(id);
 
   if (!deleted) {
     res.status(404).json({

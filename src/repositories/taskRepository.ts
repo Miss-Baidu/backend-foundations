@@ -46,3 +46,34 @@ export async function createTask(
 
   return result.rows[0];
 }
+export async function updateTask(
+  id: number,
+  title: string,
+  description: string | null,
+  status: string,
+  projectId: number,
+  assignedTo: number | null
+): Promise<Task | null> {
+  const result = await pool.query(
+    `UPDATE tasks
+     SET title = $1,
+         description = $2,
+         status = $3,
+         project_id = $4,
+         assigned_to = $5
+     WHERE id = $6
+     RETURNING *`,
+    [title, description, status, projectId, assignedTo, id]
+  );
+
+  return result.rows[0] ?? null;
+}
+
+export async function deleteTask(id: number): Promise<boolean> {
+  const result = await pool.query(
+    "DELETE FROM tasks WHERE id = $1",
+    [id]
+  );
+
+  return result.rowCount !== null && result.rowCount > 0;
+}
